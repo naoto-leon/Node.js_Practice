@@ -20,3 +20,61 @@ Node.js チートシート　
 
     //node sever.js (console)
     //controal + c サーバ止める　
+
+#### HTTP連携  
+
+##### /html/hello.html
+
+    <!DOCTYPE html>
+        <html lang="en" dir="ltr">
+     <head>
+       <meta charset="utf-8">
+       <title></title>
+       </head>
+       <body>
+           <h1>hello</h1>
+       </body>
+    </html>
+    
+ ##### setting.js 
+ 
+     //setting.js
+    //port hostの設定　
+
+    exports.port = 1337;
+    exports.host = '192.168.0.103';
+
+ ##### hello.js 
+ 
+    var http = require('http');
+    //ファイル読み込みのモジュール　
+    
+    fs = require('fs')
+    var settings = require('./setting')
+    var sever = http.createServer();
+    sever.on('request' , function(req,res){
+      
+      fs.readFile(__dirname + '/html/hello.html','utf-8',function(err, date){
+                      //読み込み　__dirname は現在のdirctryの取得　function(err, date) コールバック関数
+       if (err) {
+                //エラー処理
+             res.writeHead(404, {'Content-Type': 'text/plain'});
+             res.write("Not found");
+             return res.end();
+       }
+       
+             res.writeHead(200, {'Content-Type': 'text/html'});
+                          //Content-Typeをhtmlに変更　
+             res.write(date);
+                          //取得した場合に返されるのは'date'
+             res.end();
+
+       });
+     });
+
+    sever.listen(settings.port,settings.host);
+                        //settingの変数
+
+                       // control + cでサーバ止める　
+                       
+                       
