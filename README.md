@@ -136,4 +136,4 @@ Node.js チートシート　
       // control + cでサーバ止める　
             
 #### [EJS連携・配列での取得]  
-##  fghjk
+##### HTML FormでのPostを配列で取得する
