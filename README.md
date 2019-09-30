@@ -1,7 +1,7 @@
 # Node.js_Practice
 Node.js チートシート　
 
-#### サーバ設定  
+#### [サーバ設定]  
 
       var http = require('http');
       //モジュールの読み込み　
@@ -21,7 +21,7 @@ Node.js チートシート　
     //node sever.js (console)
     //controal + c サーバ止める　
 
-#### HTTP連携  
+#### [HTML連携]  
 
 ##### /html/hello.html
 
@@ -77,4 +77,17 @@ Node.js チートシート　
 
                        // control + cでサーバ止める　
                        
-                       
+#### [EJS連携]        
+
+ ##### hello.ejs  
+ 
+      <!DOCTYPE html>
+      <html>
+          <!-- nodeを使う場合 (-)はエスケープ　 -->
+          <h1><%= title %></h1>
+          <p><%- content %></p>
+          <p><%= n %> views</p>
+
+      </html>
+
+ ##### hello.ejs  
