@@ -136,4 +136,99 @@ Node.js チートシート　
       // control + cでサーバ止める　
             
 #### [EJS連携・配列での取得]  
-##### HTML FormでのPostを配列で取得する
+##### HTML FormでのPostを配列で取得する  
+
+ ##### bbs.js  
+      <!DOCTYPE html>
+      <html lang = "ja">
+
+      <head>
+        <title>BBS</title>
+          <meta charset="utf-8">
+      </head>
+
+      <body>
+        <form method="post">
+          <input type="text" name="name">
+          <input type="submit"  value="post!">
+
+          <ul>
+            <% for(var i = 0; i < posts.length; i++){ %>
+                    <li><%= posts[i] %></li>
+            <%  } %>
+          </ul>
+        </form>
+      </body>
+
+      </html>  
+      
+##### setting.js  
+
+      //setting.js
+      //port hostの設定　
+
+      exports.port = 1337;
+      exports.host = '192.168.0.103';  
+      
+##### hello.js  
+
+      var http = require('http'),
+            //ファイル読み込みのモジュール　
+      fs = require('fs'),
+            //ejs読み込みのモジュール
+      ejs = require('ejs');
+            //ホームからの投稿処理モジュール　
+      qs = require('querystring')
+      
+      var settings = require('./setting');
+      var sever = http.createServer();
+
+             //テンプレートの作成 __dirname現在のヂィレクトリ
+      var template = fs.readFileSync(__dirname + '/html/bbs.ejs','utf-8');
+     
+             //投稿処理する配列
+      var posts = [];
+            //レスポンスの設定
+      function renderForm(posts,res){
+      var date = ejs.render(template,{
+              posts: posts
+              //postsの受け取り
+       });
+       
+       res.writeHead(200, {'Content-Type' : 'text/html'});
+       res.write(date);
+              //取得した場合に返されるのは'date'
+       res.end();
+      }
+
+      sever.on('request' , function(req,res){
+            //ejs 読み込み　
+             //投稿されたかどうか
+      if (req.method === 'POST') {
+             req.date = "";
+             req.on("readable",function(){
+               //データがどんどん送られてくる間の処理
+             req.date += req.read();
+      });
+
+      req.on("end", function(){
+              //データの受信終わったらの処理
+     
+     var query = qs.parse(req.date);
+              //受信したデータを変数に
+      posts.push(query.name);
+             //Postsに送られたデータをpush
+      renderForm(posts,res);
+      });
+
+      }else{
+              //formに配列とレスポンスを渡す
+      renderForm(posts,res);
+
+      }
+        });
+
+      sever.listen(settings.port,settings.host);
+      //settingの変数
+
+      // control + cでサーバ止める　
