@@ -98,5 +98,40 @@ Node.js チートシート　
             
  ##### hello.js   
  
- 
+       //hello.js
+      var http = require('http'),
+      //ファイル読み込みのモジュール　
+      fs = require('fs'),
+      //ejs読み込みのモジュール
+      ejs = require('ejs');
+
+      var settings = require('./setting');
+      var sever = http.createServer();
+
+      //テンプレートの作成
+      var template = fs.readFileSync(__dirname + '/html/hello.ejs','utf-8');
+      //__dirname源氏あのヂィレクトリ
+      //nの初期化
+      var n = 0;
+      sever.on('request' , function(req,res){
+      //ejs 読み込み　
+      n++;
+      var date = ejs.render(template,{
+        title: "hello",
+        content: "<strong> World </strong>",
+        n: n
+      });
+
+          res.writeHead(200, {'Content-Type' : 'text/html'});
+          //Content-Typeをhtmlに変更　
+          res.write(date);
+          //取得した場合に返されるのは'date'
+          res.end();
+
+        });
+
+      sever.listen(settings.port,settings.host);
+      //settingの変数
+
+      // control + cでサーバ止める　
             
