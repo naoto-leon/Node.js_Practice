@@ -233,7 +233,11 @@ Node.js チートシート　
 
       // control + cでサーバ止める　
       
+  *  
+    *  
+    *  
+      
    ### [Paiza Cloudでの運用]  
-   #### Node.js、Express.js、JavaScript、MongoDBデータベースえお
+   #### Node.js、Express.js、JavaScript、MongoDBデータベースを使っての実装  
    
-   ### [Paiza Cloudでの  
+   
