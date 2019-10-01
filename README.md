@@ -237,9 +237,216 @@ Node.js チートシート　
    ### [Paiza Cloudでの運用]  
    #### Node.js、Express.js、JavaScript、MongoDBデータベースを使っての実装  
    
+   ##### paizaでのnodejsの書き方はちょっと癖があるように感じる 
+   ##### https://paiza.hatenablog.com/entry/2018/06/08/paizacloud_nodejs
+   
    [1] コマンド　npm initでプロジェクトの作成。アプリネームを入力してEnter。  
    [2] コマンド　nmp install express --save ライブラリの導入  
    [3] コマンド　nmp install mongoose --save datebaceライブラリの導入  
  
+  ##### sever.js   
+      const express  = require('express');
+      //web開発に必要なライブラリ　
+      const app = express();
+      //アプリの作成　
+      const mongoose = require('mongoose');
+      //datebase 
+      const bodyParser = require('body-parser');
+      //リクエストのパース　
+
+      app.use(express.static(__dirname + '/public'));
+      //静的ファイルの使用　public以下　
+      app.use(bodyParser.json());
+      //json形式で投げられた内容のパース
+
+      mongoose.connect('mongodb://localhost/mydb');
+      //datebaseにアクセス　
+
+      //To doリストのモデルをdatebaseに作成
+      const Todo = mongoose.model('Todo', {
+          text : String
+      });
+
+
+      /////////
+      // 実際のurlに対する処理
+      /////////
+
+
+      app.get('/api/todos', (req, res) => {
+          Todo.find()
+          //すべてのtodo一覧を取得　
+        .then((todos) => {
+             //取得したtosoの利用　
+              res.json(todos);
+             //一覧をjson形式で返す　
+          })
+          .catch((err) => {
+                  res.send(err);
+              //エラー処理
+          })
+      });
+
+      app.post('/api/todos', (req, res) => {
+          const todo = req.body;
+          //入力ホームのないよ鵜を取得　
+          Todo.create({
+              //データベース上にtextとして追加
+              text: todo.text,
+          })
+          .then((todo) =>{
+              res.json(todo);
+              //作成したtodoがかえってくるのでjsonとして返す
+          })
+              .catch((err) => {
+                  res.send(err);
+              //エラー処理
+          });
+      });
+
+      //deleateの操作　
+
+      app.delete('/api/todos/:todo_id',(req,res) =>{
+          Todo.remove({
+              _id : req.params.todo_id
+              //削除するid(url)を選択
+          })
+            .then((todo) => {
+                 res.send(todo); 
+              //削除したら
+          })
+              .catch((err) => {
+              res.send(err);
+              //エラー処理
+          });
+      });
+
+      app.get('/', (req, res) => {
+          //アクセスした時に静的ファイルを返すようにしとく　
+       res.sendfile('./public/index.html');
+      });
+
+      app.listen(3000, () => {
+          console.log("My app listening on port 3000!");
+      });
+
+  ##### public/index.html  
+  
+        <!DOCTYPE html>
+      <html>
+          <head>
+              <title>TodoList</title>
+              <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+              <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
+              <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/milligram/1.3.0/milligram.css">
+                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+                 <script src="client.js"></script>
+          </head>
+          <body>
+               <div class = "container">
+                   <h1>Task List</h1>
+                   <div class = "form-group">
+                       <input type="text" name="name" class="new-todo-text form-control" placeholder="task">
+
+                       <button type="submit" class ="btn btn-default" onclick="createTodo()">add</button>
+                   </div>
+
+                   <h2>Task New </h2>
+                   <table class ="table table-striped task-table">
+                       <thead>
+                           <th>Task</th><th>&nbsp;</th>
+                       </thead>
+
+                       <tbody class="todos">
+                           <tr class ="todo template" style="display: none;">
+                               <td>
+                                   <span class ="text"></span>
+                                  <span class = "id" style="display: none;"></span>
+                               </td>
+                               <td>
+                                   <button onclick="deleteTodo(this)">Delete</button>
+                               </td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
+          </body>
+      </html>
+ 
+   ##### public/client.js  
    
-   
+      //todosを元にhtmlに変換
+      function render(todos){
+          $(".todos").children().not(".template").remove();
+          //最初templateclass以外は削除
+          const template = $(".todos").children(".template");
+          //todosの下の子要素から.templateを取得
+
+          todos.forEach((todo) => {
+              const node = template.clone(true).show().removeClass("template")
+              //templateを引数を持たせコピー
+              node.find(".text").text(todo.text);
+              //textはtodoの中のtext
+            node.find(".id").text(todo._id);
+            //idはtodoの中の_id 
+            $(".todos").append(node);
+            //todosの中の最後に作成したnodeの追加
+          });
+      }
+
+
+      //サーバーから値の取得jsに変換
+      function getTodos(){
+          //todo一覧を取得　
+          fetch('/api/todos')
+          //feachでサーバーから一覧を取得
+          .then((date) => date.json())
+              //json形式として解釈してjsに変換
+              .then((json) => {
+                  const todos = json;
+                  //jsonをtodosに割り当て
+                  render(todos);
+              });
+          }
+
+
+      //投稿した時の動作　
+
+      function createTodo(){
+          const text = $(".new-todo-text").val();
+          //valで値の取り出し
+          fetch('/api/todos',{
+              //作成したtodoをサーバーへ
+              method: "POST",
+              headers:{
+                  'Content-Type': 'application/json',
+                  //json形式でサーバーへ
+              },
+              body: JSON.stringify({text: text}),
+              //送信するデータをjson形式に変換してtextフィールドに格納
+          })
+          .then(() =>{
+             getTodos();
+             //送信できたら更新
+          });
+      }
+
+
+
+       //削除した時の動作
+
+       function deleteTodo(el){
+           //elで受けとり 引数にthis
+           const id = $(el).closest(".todo").find(".id").text();
+           //todoのidを取得 一番近いtodoを取得してidのtextを取得
+           fetch(`/api/todos/${id}`,{
+               //サーバーへ削除の処理を投げる
+               method: "DELETE"
+           })
+           .then(() =>{
+              getTodos(); 
+                     //送信できたら更新
+           });
+       }
+
+      $(getTodos);
