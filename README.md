@@ -237,4 +237,9 @@ Node.js チートシート　
    ### [Paiza Cloudでの運用]  
    #### Node.js、Express.js、JavaScript、MongoDBデータベースを使っての実装  
    
+   [1] コマンド　npm initでプロジェクトの作成。アプリネームを入力してEnter。  
+   [2] コマンド　nmp install express --save ライブラリの導入  
+ 
+ 
+   
    
