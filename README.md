@@ -232,3 +232,8 @@ Node.js チートシート　
       //settingの変数
 
       // control + cでサーバ止める　
+      
+   ### [Paiza Cloudでの運用]  
+   #### Node.js、Express.js、JavaScript、MongoDBデータベースえお
+   
+   ### [Paiza Cloudでの  
