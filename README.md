@@ -239,7 +239,7 @@ Node.js チートシート　
    
    [1] コマンド　npm initでプロジェクトの作成。アプリネームを入力してEnter。  
    [2] コマンド　nmp install express --save ライブラリの導入  
- 
+   [3] コマンド　nmp install mongoose --save datebaceライブラリの導入  
  
    
    
