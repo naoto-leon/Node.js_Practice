@@ -450,3 +450,16 @@ Node.js チートシート　
        }
 
       $(getTodos);
+
+***
+   ### [Web・Speech・APIをnodejsでhttps経由でUnityへ送る]  
+   #### Node.js、unity、WebSocket、を使っての実装  
+   
+   ##### 環境構築が大変でした 
+   ##### http://tips.hecomi.com/entry/20131202/1386004185  
+   #####  https://qiita.com/nmxi/items/d3a0e787ca67e27ffd17
+
+   
+   [1] コマンド　npm initでプロジェクトの作成。アプリネームを入力してEnter。  
+   [2] コマンド　nmp install express --save ライブラリの導入  
+   [3] コマンド　nmp install mongoose --save datebaceライブラリの導入  
