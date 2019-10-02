@@ -1,0 +1,25 @@
+﻿<Properties StartupConfiguration="{44F5326E-20A4-8D32-2499-121F924D6848}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/WSVoiceRecording.cs">
+    <Files>
+      <File FileName="Assets/WSVoiceRecording.cs" Line="8" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="websoket_google" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="WSVoiceRecording.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="2a53088f-24fb-4c5f-946c-5f55ffdb7738" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
