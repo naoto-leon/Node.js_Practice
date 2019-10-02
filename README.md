@@ -464,7 +464,9 @@ Node.js チートシート　
    
    [1] websocket-sharpをコンパイルしてwebsocket-sharp.dllをunityにインポート。   
    [2] コマンド　npm install ws  ディレクトリ下でws(websoket)のインストール。npm list --depth=0 で確認  
-   [3] コマンド　$ openssl genrsa -out key.pem 1024 $ openssl req -new -key key.pem -out csr.pem  httpsサーバの準備  
+   [3] コマンド　$ openssl genrsa -out key.pem 1024 $ openssl req -new -key key.pem -out csr.pem  [httpsサーバの準備]  
+   
+   
    
    
  
