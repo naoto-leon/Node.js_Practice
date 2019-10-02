@@ -456,10 +456,15 @@ Node.js チートシート　
    #### Node.js、unity、WebSocket、を使っての実装  
    
    ##### 環境構築が大変でした 
-   ##### http://tips.hecomi.com/entry/20131202/1386004185  
+   #### [参考]
+   ##### http://tips.hecomi.com/entry/20131202/1386004185 
    #####  https://qiita.com/nmxi/items/d3a0e787ca67e27ffd17
-
+   #####  http://codedehitokoto.blogspot.com/2012/02/nodejshttps.html
+   ##### https://dackdive.hateblo.jp/entry/2016/10/10/095800
    
-   [1] コマンド　npm initでプロジェクトの作成。アプリネームを入力してEnter。  
-   [2] コマンド　nmp install express --save ライブラリの導入  
-   [3] コマンド　nmp install mongoose --save datebaceライブラリの導入  
+   [1] websocket-sharpをコンパイルしてwebsocket-sharp.dllをunityにインポート。   
+   [2] コマンド　npm install ws  ディレクトリ下でws(websoket)のインストール
+   [3] コマンド　$ openssl genrsa -out key.pem 1024 $ openssl req -new -key key.pem -out csr.pem  httpsサーバの準備  
+   
+   
+ 
