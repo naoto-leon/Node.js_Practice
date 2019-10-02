@@ -466,7 +466,33 @@ Node.js チートシート　
    [2] コマンド　npm install ws  ディレクトリ下でws(websoket)のインストール。npm list --depth=0 で確認  
    [3] コマンド　$ openssl genrsa -out key.pem 1024 $ openssl req -new -key key.pem -out csr.pem  [httpsサーバの準備]  
    
+   ##### WSVoiceRecording.cs  
    
-   
+      using System.Collections;
+      using System.Collections.Generic;
+      using UnityEngine;
+      using WebSocketSharp;
+
+      public class WSVoiceRecording : MonoBehaviour
+      {
+          private WebSocket ws_;
+          private void Awake()
+          {
+              //connect 
+              ws_ = new WebSocket("ws://192.168.0.103:12002");
+
+              //On catch message event
+              ws_.OnMessage += (sender, e) =>
+              {
+                  Debug.Log(e.Data); // 認識結果
+              };
+              ws_.Connect();
+          }
+
+          private void OnApplicationQuit()
+          {
+              ws_.Close();
+          }
+      }
    
  
