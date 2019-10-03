@@ -8,6 +8,7 @@
       // WebSocket でサーバと接続
       var ws = new WebSocket('wss://localhost:{CHROME_PORT}');
 
+// ここからテンプレ
       // Web Speech API で音声認識
       var recognition = new webkitSpeechRecognition();
 
@@ -33,6 +34,7 @@
           var result = event.results[event.resultIndex][0].transcript;
           document.getElementById('result').innerHTML = result;
           ws.send(result);
+          // 最終的にwsで送信
         }
       }
 
@@ -42,7 +44,7 @@
   </script>
 </head>
 <body>
-  <h1>title</h1>
+  <h1>recognition</h1>
 
   <div id="result"></div>
 </body>
