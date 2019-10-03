@@ -450,3 +450,168 @@ Node.js チートシート　
        }
 
       $(getTodos);
+
+***
+   ### [Web・Speech・APIをnodejsでhttps経由でUnityへ送る]  
+   #### Node.js、unity、WebSocket、を使っての実装  
+   
+   ##### 環境構築が大変でした 
+   #### [参考]
+   ##### http://tips.hecomi.com/entry/20131202/1386004185 
+   #####  https://qiita.com/nmxi/items/d3a0e787ca67e27ffd17
+   #####  http://codedehitokoto.blogspot.com/2012/02/nodejshttps.html
+   ##### https://dackdive.hateblo.jp/entry/2016/10/10/095800  
+   ##### https://github.com/websockets/ws
+   [1] websocket-sharpをコンパイルしてwebsocket-sharp.dllをunityにインポート。   
+   [2] コマンド　npm install ws  ディレクトリ下でws(websoket)のインストール。npm list --depth=0 で確認  
+   [3] コマンド　$ openssl genrsa -out key.pem 1024 $ openssl req -new -key key.pem -out csr.pem  [httpsサーバの準備]  
+   
+   ##### WSVoiceRecording.cs  
+   
+      using System.Collections;
+      using System.Collections.Generic;
+      using UnityEngine;
+      using WebSocketSharp;
+
+      public class WSVoiceRecording : MonoBehaviour
+      {
+          private WebSocket ws_;
+          private void Awake()
+          {
+              //connect 
+              ws_ = new WebSocket("ws://192.168.0.103:12002");
+
+              //On catch message event
+              ws_.OnMessage += (sender, e) =>
+              {
+                  Debug.Log(e.Data); // 認識結果
+              };
+              ws_.Connect();
+          }
+
+          private void OnApplicationQuit()
+          {
+              ws_.Close();
+          }
+      }
+   
+   ##### index.html  
+   
+         <!DOCTYPE html>
+      <html lang="ja">
+      <head>
+        <meta charset="UTF-8">
+        <title>Web Speech API WebSocket Sender</title>
+        <script>
+          (function() {
+               // WebSocket でサーバと接続
+            var ws = new WebSocket('wss://localhost:{CHROME_PORT}');
+
+               // ここからテンプレ
+               // Web Speech API で音声認識
+            var recognition = new webkitSpeechRecognition();
+
+              // 連続音声認識
+            recognition.continuous = true;
+
+              // エラー表示
+            recognition.onerror = function(err) {
+                console.error(err);
+            }
+
+             // 無音停止時に自動で再開
+            recognition.onaudioend = function() {
+                recognition.stop();
+                setTimeout(function() {
+                  recognition.start();
+                }, 1000);
+            }
+
+             // 音声認識結果をサーバへ送信
+            recognition.onresult = function(event) {
+              for (var i = event.resultIndex; i < event.results.length; ++i) {
+                var result = event.results[event.resultIndex][0].transcript;
+                document.getElementById('result').innerHTML = result;
+                ws.send(result);
+                // 最終的にwsで送信
+              }
+            }
+
+             // 音声認識開始　
+            recognition.start();
+          })();
+        </script>
+      </head>
+      <body>
+        <h1>recognition</h1>
+        <div id="result"></div>
+      </body>
+      </html>  
+      
+   ##### sever.js  
+   
+      var https = require('https');
+      //https通信
+      var fs    = require('fs');
+      //モジュール読み込み
+      var ws    = require('ws').Server;
+      //ws読み込み
+
+      var CHROME_PORT = 12001;
+      var UNITY_PORT  = 12002;
+      //portの設定
+
+      // WebSpeech API を Chrome で走らせるための HTTPS サーバ
+      var server = https.createServer({
+            key: fs.readFileSync('key.pem'),
+            cert: fs.readFileSync('cert.pem')
+            //httpsはkeyとcertが必要　
+      },
+      function(req, res) {
+            fs.readFile('index.html', function(err, data) {
+                  //htmlファイルの読み込み
+                  if (err) {
+                        res.writeHead(500);
+                        res.end('Internal Server Error');
+                        //err処理
+                  } else {
+                        res.writeHead(200);
+                        res.end(data.toString().replace('{CHROME_PORT}', CHROME_PORT));
+      //dateを書き出して処理完了
+                  }
+            });
+      }).listen(CHROME_PORT);
+
+      // Unity と WebSocket によるコネクションをはる
+      var unityWebSockets = [];
+      // 配列
+      var unityServer = new ws({port: UNITY_PORT});
+      //ws port
+      unityServer.on('connection', function(ws) {
+            console.log('Unity connected!');
+            unityWebSockets.push(ws);
+            //wsへpush通信
+            ws.on('close', function() {
+                  console.log('Unity disconnected...');
+                  unityWebSockets.splice(unityWebSockets.indexOf(ws), 1);
+                  //spliceでインデックスを削除　
+            });
+      });
+
+      // Web Speech API の結果を取ってくる
+      var chromeVoiceRecogServer = new ws({server: server});
+      //WebSocketのインスタンスを作成
+      chromeVoiceRecogServer.on('connection', function(ws) {
+            console.log('Chrome connected!');
+
+            ws.on('message', function(word) {
+                  //wordで帰ってくるものを取得　
+                  console.log('recognized:', word);
+                  unityWebSockets.forEach(function(unityWebSocket) {
+                        unityWebSocket.send(word);
+                        //	unityWebSocketへ送信
+                  });
+            }).on('close', function() {
+                  console.log('Chrome disconnected...');
+            });
+      });
